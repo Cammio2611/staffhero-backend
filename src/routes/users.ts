@@ -1,11 +1,16 @@
 import express from 'express';
-import { updateCompliance, getAllUsers } from '../controllers/userController';
-import { updateAvailability } from '../controllers/userController';
+import {
+  getAllUsers,
+  getUserById,
+  updateUser,
+  deleteUser,
+} from '../controllers/userController';
 
 const router = express.Router();
 
 router.get('/', getAllUsers);
-router.put('/compliance', updateCompliance);
-router.put('/availability', updateAvailability);
+router.get('/:id', getUserById);
+router.put('/:id', updateUser);
+router.delete('/:id', deleteUser);
 
 export default router;
