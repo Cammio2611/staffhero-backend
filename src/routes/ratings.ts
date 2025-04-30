@@ -1,9 +1,12 @@
-// backend/src/routes/ratings.ts
 import express from 'express';
-import { rateCandidate } from '../controllers/ratingController';
+import {
+  getAllRatings,
+  createRating,
+} from '../controllers/ratingController';
 
 const router = express.Router();
 
-router.post('/', rateCandidate);
+router.get('/', getAllRatings);
+router.post('/', createRating);
 
 export default router;

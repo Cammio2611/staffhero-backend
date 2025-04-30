@@ -1,11 +1,14 @@
-// src/routes/onboarding.ts
-
 import express from 'express';
-import { sendOnboardingEmail } from '../controllers/onboardingController';
+import {
+  startOnboarding,
+  getOnboardingStatus,
+  completeOnboarding,
+} from '../controllers/onboardingController';
 
 const router = express.Router();
 
-// POST /api/onboarding/send
-router.post('/send', sendOnboardingEmail);
+router.post('/start', startOnboarding);
+router.get('/:userId/status', getOnboardingStatus);
+router.post('/:userId/complete', completeOnboarding);
 
 export default router;
