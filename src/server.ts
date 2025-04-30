@@ -6,7 +6,7 @@ import { Server } from 'socket.io';
 import dotenv from 'dotenv';
 
 import adminRoutes from './routes/admin';
-import staffRoutes from './routes/staff';
+import staffRoutes from './routes/staff'; // ✅ FIXED
 import notificationRoutes from './routes/notifications';
 import { checkComplianceExpiry } from '../scripts/checkComplianceExpiry';
 import healthRoutes from './routes/health';
