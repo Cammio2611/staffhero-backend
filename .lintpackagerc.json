@@ -1,0 +1,7 @@
+{
+  "rules": {
+    "no-duplicate-deps": "error",
+    "prefer-dependencies": ["error", ["cloudinary", "multer-storage-cloudinary"]],
+    "no-legacy-peer-deps": "warn"
+  }
+}
