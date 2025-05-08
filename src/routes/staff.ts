@@ -55,20 +55,20 @@ router.post("/profile-photo", authenticateStaff, upload.single("avatar"), async 
     }
 
     const streamUpload = () =>
-      new Promise<{ url: string }>((resolve, reject) => {
-        const stream = cloudinary.uploader.upload_stream(
-          {
-            folder: "staffhero-profile-photos",
-            allowed_formats: ["jpg", "jpeg", "png"],
-            transformation: [{ width: 300, height: 300, crop: "fill" }],
-          },
-          (error, result) => {
-            if (result?.secure_url) resolve({ url: result.secure_url });
-            else reject(error);
-          }
-        );
-        streamifier.createReadStream(req.file.buffer).pipe(stream);
-      });
+  new Promise<{ url: string }>((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        folder: "staffhero-profile-photos",
+        allowed_formats: ["jpg", "jpeg", "png"],
+        transformation: [{ width: 300, height: 300, crop: "fill" }],
+      },
+      (error: any, result: any) => { // ✅ Explicitly type these
+        if (result?.secure_url) resolve({ url: result.secure_url });
+        else reject(error);
+      }
+    );
+    streamifier.createReadStream(req.file!.buffer).pipe(stream); // ✅ Use non-null assertion
+  });
 
     const result = await streamUpload();
 
