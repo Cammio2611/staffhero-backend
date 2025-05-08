@@ -48,19 +48,25 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
     try {
         const { email, password } = req.body;
+        console.log("🔐 Login attempt:", email);
         const user = await User_1.default.findOne({ email });
-        if (!user)
+        if (!user) {
+            console.log("❌ No user found");
             return res.status(401).json({ error: "Invalid email or password" });
+        }
         const isMatch = await bcryptjs_1.default.compare(password, user.password);
-        if (!isMatch)
+        if (!isMatch) {
+            console.log("❌ Password mismatch");
             return res.status(401).json({ error: "Invalid email or password" });
+        }
         if (!process.env.JWT_SECRET) {
-            console.error("JWT_SECRET not configured");
-            return res.status(500).json({ error: "JWT secret is not configured" });
+            console.error("❌ JWT_SECRET is missing in env");
+            return res.status(500).json({ error: "JWT secret not configured." });
         }
         const token = jsonwebtoken_1.default.sign({ id: user._id }, process.env.JWT_SECRET, {
             expiresIn: "1d",
         });
+        console.log("✅ Login successful for", user._id);
         res.json({ token });
     }
     catch (err) {
