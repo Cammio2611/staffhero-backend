@@ -1,5 +1,4 @@
 declare module "streamifier" {
   import { Readable } from "stream";
-
-  export function createReadStream(buffer: Buffer | string): Readable;
+  export function createReadStream(obj: Buffer | string): Readable;
 }
