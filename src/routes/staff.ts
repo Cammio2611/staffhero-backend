@@ -1,30 +1,21 @@
-import express from "express";
-import { Response } from "express";
+import express, { Response } from "express";
+import multer from "multer";
+import streamifier from "streamifier";
+
 import { authenticateStaff } from "../middleware/auth";
 import { AuthenticatedRequest } from "../types/express";
+import cloudinary from "../utils/cloudinary";
+
 import Shift from "../models/Shift";
 import Compliance from "../models/Compliance";
 import Review from "../models/Review";
 import Notification from "../models/Notification";
 import User from "../models/User";
 
-import multer from "multer";
-import { CloudinaryStorage } from "multer-storage-cloudinary";
-import cloudinary from "../utils/cloudinary";
-
 const router = express.Router();
+const upload = multer(); // memory storage
 
-// ✅ Setup Cloudinary for profile photo upload
-const storage = new CloudinaryStorage({
-  cloudinary,
-  params: {
-    folder: "staffhero-profile-photos",
-    allowed_formats: ["jpg", "png", "jpeg"],
-    transformation: [{ width: 300, height: 300, crop: "fill" }],
-  },
-});
-const upload = multer({ storage });
-
+// ✅ GET /api/staff/dashboard
 router.get("/dashboard", authenticateStaff, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const userId = req.user?.id;
@@ -56,18 +47,41 @@ router.get("/dashboard", authenticateStaff, async (req: AuthenticatedRequest, re
   }
 });
 
-// ✅ Profile photo upload to Cloudinary
+// ✅ POST /api/staff/profile-photo (upload image to Cloudinary)
 router.post("/profile-photo", authenticateStaff, upload.single("avatar"), async (req: AuthenticatedRequest, res: Response) => {
   try {
-    if (!req.file) return res.status(400).json({ error: "No file uploaded." });
+    if (!req.file) {
+      return res.status(400).json({ error: "No file uploaded." });
+    }
 
-    const updated = await User.findByIdAndUpdate(
+    const streamUpload = () =>
+      new Promise<{ url: string }>((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          {
+            folder: "staffhero-profile-photos",
+            allowed_formats: ["jpg", "jpeg", "png"],
+            transformation: [{ width: 300, height: 300, crop: "fill" }],
+          },
+          (error, result) => {
+            if (result?.secure_url) resolve({ url: result.secure_url });
+            else reject(error);
+          }
+        );
+        streamifier.createReadStream(req.file.buffer).pipe(stream);
+      });
+
+    const result = await streamUpload();
+
+    const updatedUser = await User.findByIdAndUpdate(
       req.user?.id,
-      { profilePhoto: req.file?.path },
+      { profilePhoto: result.url },
       { new: true }
     );
 
-    res.json({ message: "Profile photo updated", profilePhoto: updated?.profilePhoto });
+    res.json({
+      message: "Profile photo updated",
+      profilePhoto: updatedUser?.profilePhoto,
+    });
   } catch (err) {
     console.error("❌ Upload error:", err);
     res.status(500).json({ error: "Failed to upload profile photo." });
