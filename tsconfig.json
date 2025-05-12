@@ -1,20 +1,14 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-<<<<<<< HEAD
     "module": "CommonJS",
     "lib": ["ES2020"],
-=======
     "module": "CommonJS",           // ✅ COMMONJS (no ESNext needed)
->>>>>>> 7e167e2616bec004039e82f0d68b0aa89231a6f3
     "outDir": "dist",
     "rootDir": ".",
     "strict": true,
     "esModuleInterop": true,
-<<<<<<< HEAD
     "resolveJsonModule": true,
-=======
->>>>>>> 7e167e2616bec004039e82f0d68b0aa89231a6f3
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true
