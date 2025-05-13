@@ -1,32 +1,30 @@
-import { Request, Response, NextFunction } from 'express';
+import { RequestHandler } from 'express';
 import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'Synergy2025';
 
-interface AuthRequest extends Request {
-  user?: any;
-}
-
-export const authenticateToken = (req: AuthRequest, res: Response, next: NextFunction) => {
+export const authenticateToken: RequestHandler = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
-  if (!token) return res.status(401).json({ error: 'Token missing' });
+  if (!token) {
+    return res.status(401).json({ error: 'Token missing' });
+  }
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
-    req.user = decoded;
+    (req as any).user = decoded;
     next();
-  } catch (err: any) {
+  } catch (err) {
     return res.status(403).json({ error: 'Invalid or expired token' });
   }
 };
 
-// Alias to support legacy route expectations
-export { authenticateToken as authenticateStaff };
+export const authenticateStaff = authenticateToken;
 
-export const verifyAdmin = (req: AuthRequest, res: Response, next: NextFunction) => {
-  if (req.user?.role !== 'admin') {
+export const verifyAdmin: RequestHandler = (req, res, next) => {
+  const user = (req as any).user;
+  if (!user || user.role !== 'admin') {
     return res.status(403).json({ error: 'Admin access required' });
   }
   next();
