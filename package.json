@@ -10,6 +10,9 @@
     "check:compliance": "ts-node scripts/checkComplianceExpiry.ts"
   },
   "dependencies": {
+    "@types/date-fns": "^2.5.3",
+    "@types/multer": "^1.4.12",
+    "@types/nodemailer": "^6.4.17",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "date-fns": "^2.30.0",
@@ -19,16 +22,12 @@
     "mongoose": "^7.4.1",
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.9.4",
-    "socket.io": "^4.7.2",
-
-    "@types/bcryptjs": "^2.4.6",
-    "@types/jsonwebtoken": "^9.0.9",
-    "@types/nodemailer": "^6.4.17",
-    "@types/multer": "^1.4.12",
-    "@types/date-fns": "^2.5.3"
+    "socket.io": "^4.7.2"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
     "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.9",
     "@types/mongoose": "^5.11.97",
     "@types/node": "^20.17.32",
     "ts-node": "^10.9.2",
