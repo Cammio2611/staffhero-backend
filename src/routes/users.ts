@@ -1,11 +1,16 @@
+// routes/users.ts
 import express from 'express';
-import { updateCompliance, getAllUsers } from '../controllers/userController';
-import { updateAvailability } from '../controllers/userController';
+import {
+  updateAvailability,
+  updateCompliance,
+  getUserProfile
+} from '../controllers/userController';
+import { authenticateStaff } from '../middleware/auth';
 
 const router = express.Router();
 
-router.get('/', getAllUsers);
-router.put('/compliance', updateCompliance);
-router.put('/availability', updateAvailability);
+router.get('/profile', authenticateStaff, getUserProfile);
+router.put('/availability', authenticateStaff, updateAvailability);
+router.put('/compliance', authenticateStaff, updateCompliance);
 
 export default router;

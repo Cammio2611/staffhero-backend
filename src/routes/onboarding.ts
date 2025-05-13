@@ -1,11 +1,10 @@
-// src/routes/onboarding.ts
-
+// routes/onboarding.ts
 import express from 'express';
-import { sendOnboardingEmail } from '../controllers/onboardingController';
+import { completeOnboarding } from '../controllers/userController';
+import { authenticateStaff } from '../middleware/auth';
 
 const router = express.Router();
 
-// POST /api/onboarding/send
-router.post('/send', sendOnboardingEmail);
+router.post('/complete', authenticateStaff, completeOnboarding);
 
 export default router;
