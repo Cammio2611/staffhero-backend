@@ -1,32 +1,33 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
-const SECRET_KEY = process.env.JWT_SECRET || Synergy2025!; // Replace with real env var
+const JWT_SECRET = process.env.JWT_SECRET || 'Synergy2025';
 
-export interface AuthenticatedRequest extends Request {
+interface AuthRequest extends Request {
   user?: any;
 }
 
-export const authenticateToken = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+export const authenticateToken = (req: AuthRequest, res: Response, next: NextFunction) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
-  if (!token) {
-    return res.status(401).json({ message: 'No token provided' });
-  }
+  if (!token) return res.status(401).json({ error: 'Token missing' });
 
-  jwt.verify(token, SECRET_KEY, (err, user) => {
-    if (err) {
-      return res.status(403).json({ message: 'Token is not valid' });
-    }
-    req.user = user;
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user = decoded;
     next();
-  });
+  } catch (err: any) {
+    return res.status(403).json({ error: 'Invalid or expired token' });
+  }
 };
 
-export const verifyAdmin = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-  if (!req.user || req.user.role !== 'admin') {
-    return res.status(403).json({ message: 'Access denied: Admins only' });
+// Alias to support legacy route expectations
+export { authenticateToken as authenticateStaff };
+
+export const verifyAdmin = (req: AuthRequest, res: Response, next: NextFunction) => {
+  if (req.user?.role !== 'admin') {
+    return res.status(403).json({ error: 'Admin access required' });
   }
   next();
 };

@@ -1,4 +1,3 @@
-// routes/onboarding.ts
 import express from 'express';
 import { completeOnboarding } from '../controllers/userController';
 import { authenticateStaff } from '../middleware/auth';
